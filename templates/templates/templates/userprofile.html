@@ -44,12 +44,15 @@
       <p>Work in progress</p>
       {% if templates %}
         {% for template in templates %}
-          <p>{{ template }}</p>
+          <p>
+            <a>{{ template.TEMPLATE_NAME }}</a>
+          </p>
         {% endfor %}
       {% else %}
       <div class="alert alert-warning" role="alert">
         Currently, you have no templates.
       </div>
+      {% endif %}
 
       {% if user.is_staff %}
         <button type="button" class="btn btn-success"
@@ -61,9 +64,7 @@
          data-toggle="tooltip" title="You don't have permissions to do so.">
           {% bootstrap_icon "plus" %} Create new
         </button>
-      {% endif %}
-
-      {% endif %}
+      {% endif %}      
     </div>
 
     <div id="pages" class="tab-pane fade">
@@ -113,8 +114,11 @@
           </div>
           <div class="modal-body">
             <p>Enter the name of your new template</p>
-            <label for="tname">Name:</label>
-            <input type="text" class="form-control" id="tname">
+            <form id="create-template-form" action="/templates/tempeditor/" method="POST">
+              {% csrf_token %}
+              <label for="tname">Name:</label>
+              <input type="text" class="form-control" id="tname">
+            </form>
           </div>
           <div class="modal-footer">
             <button id="create-template" type="submit" class="btn btn-success" data-dismiss="modal">Create</button>
@@ -122,27 +126,34 @@
           </div>
         </div>
       </div>
-      <script>
-          $(function(){
-            $('create-template').on('submit', function(e){
-                 e.preventDefault();
-                 $.ajax({
-                     url: "/template/tempeditor/",
-                     type: "POST",
-                     data: {
-                       "name": $("tname").val()
-                     },
-                     success: function(data){
-                         alert("Successfully submitted.")
-                     }
-                 });
-            }); 
-         });
-      </script>
     </div>
-
-
   </div>
-
 </div>
+
+<script>
+  var csrfToken = getCsrfToken();
+
+  $(document).ready( function() {
+    $("#create-template-form").on("submit", function(e){
+         $.ajax({
+             url: $(this).attr("action"),
+             type: "POST",
+             data: {
+               "name": $("#tname").val(),
+               "CSRF": csrfToken,
+             },
+             success: function(data) {
+                 alert("Successfully submitted.");
+                 $("#submitForm").remove();
+             }
+         });
+         e.preventDefault();
+    }); 
+
+    $("#create-template").on("click", function() {
+      $("#create-template-form").submit();
+  });
+ });
+</script>
+
 {% endblock %}

@@ -15,7 +15,7 @@ class Template(models.Model):
 
     def __str__(self):
         return "Template (name = %s, created by %s)" % (
-            self.USER, self.TEMPLATE_NAME
+            self.TEMPLATE_NAME, self.USER
         )
 
 
