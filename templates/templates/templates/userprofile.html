@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+  <p>
+    Logged in as: <b>{{ username }}</b> (<i>{{ status }}</i>)
+    <a href="/templates/logout/">Log out</a>
+  </p>
+
+  <ul class="nav nav-tabs nav-justified">
+    <li class="active">
+      <a data-toggle="tab" href="#home">Home</a>
+    </li>
+    <li>
+      <a data-toggle="tab" href="#profile">My profile</a>
+    </li>
+    <li>
+      <a data-toggle="tab" href="#templates">My templates</a>
+    </li>
+    <li>
+      <a data-toggle="tab" href="#pages">My pages</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="home" class="tab-pane fade in active">
+      <h3>HOME</h3>
+      <p>Welcome, {{ username }}!</p>
+    </div>
+    <div id="profile" class="tab-pane fade">
+      <h3>My profile</h3>
+      <p>
+        <b>{{ username }}</b>
+        <br>
+        <i>{{ status.title }}</i>
+      </p>
+    </div>
+    <div id="templates" class="tab-pane fade">
+      <h3>My templates</h3>
+      <p>Work in progress</p>
+      {% if templates %}
+        {% for template in templates %}
+          <p>{{ template }}</p>
+        {% endfor %}
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+        Currently, you have no templates.
+      </div>
+
+      {% if user.is_staff %}
+        <button type="button" class="btn btn-success"
+         data-toggle="modal" data-target="#newtemplate">
+          {% bootstrap_icon "plus" %} Create new
+        </button>
+      {% else %}
+        <button type="button" class="btn btn-success disabled"
+         data-toggle="tooltip" title="You don't have permissions to do so.">
+          {% bootstrap_icon "plus" %} Create new
+        </button>
+      {% endif %}
+
+      {% endif %}
+    </div>
+
+    <div id="pages" class="tab-pane fade">
+      <h3>My pages</h3>
+      <p>Work in progress</p>
+      {% if pages %}
+        {% for page in pages %}
+          <p>{{ page }}</p>
+        {% endfor %}
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+        Currently, you have no pages.
+      </div>
+      <button type="button" class="btn btn-success"
+       data-toggle="modal" data-target="#newpage">
+        {% bootstrap_icon "plus" %} Create new
+      </button>
+      {% endif %}
+    </div>
+
+    <div id="newpage" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">New Page</h4>
+          </div>
+          <div class="modal-body">
+            <p>Enter the name of your new page</p>
+            <label for="pname">Name:</label>
+            <input type="text" class="form-control" id="pname">
+          </div>
+          <div class="modal-footer">
+            <button id="create-page" type="submit" class="btn btn-success" data-dismiss="modal">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="newtemplate" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">New Template</h4>
+          </div>
+          <div class="modal-body">
+            <p>Enter the name of your new template</p>
+            <label for="tname">Name:</label>
+            <input type="text" class="form-control" id="tname">
+          </div>
+          <div class="modal-footer">
+            <button id="create-template" type="submit" class="btn btn-success" data-dismiss="modal">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+      <script>
+          $(function(){
+            $('create-template').on('submit', function(e){
+                 e.preventDefault();
+                 $.ajax({
+                     url: "/template/tempeditor/",
+                     type: "POST",
+                     data: {
+                       "name": $("tname").val()
+                     },
+                     success: function(data){
+                         alert("Successfully submitted.")
+                     }
+                 });
+            }); 
+         });
+      </script>
+    </div>
+
+
+  </div>
+
+</div>
+{% endblock %}

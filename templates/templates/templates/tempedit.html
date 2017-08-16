@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+{% load djangocodemirror_tags %}
+
+{% block content %}
+
+<div class="container">
+  <textarea id="code" name="code">Preview your template here.</textarea>
+  <iframe id="preview"></iframe>
+</div>
+{% codemirror_instance 'django' 'code_codemirror' 'code' %}
+{% endblock %}

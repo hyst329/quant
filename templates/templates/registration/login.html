@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block content %}
+
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">
+  Your username and password didn't match. Please try again.
+</div>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+    <div class="alert alert-danger" role="alert">
+        Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        Please login to see this page.
+    </div>
+    {% endif %}
+{% endif %}
+
+<div id="login">
+  <form method="post" action="/templates/login/" class="form">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td>{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+      </tr>
+    </table>
+
+    <button type="submit" value="login" class="btn btn-primary" >
+      {% bootstrap_icon "log-in" %} Login
+    </button>
+    <input type="hidden" name="next" value="{{ next }}" />
+  </form>
+</div>
+
+{% endblock %}
