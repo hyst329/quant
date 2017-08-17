@@ -45,7 +45,7 @@
       {% if templates %}
         {% for template in templates %}
           <p>
-            <a>{{ template.TEMPLATE_NAME }}</a>
+            <a href="/templates/tempeditor/?name={{ template.TEMPLATE_NAME }}">{{ template.TEMPLATE_NAME }}</a>
           </p>
         {% endfor %}
       {% else %}
@@ -134,17 +134,19 @@
   var csrfToken = getCsrfToken();
 
   $(document).ready( function() {
-    $("#create-template-form").on("submit", function(e){
+    $("#create-template-form").on("submit", function(e) {
+         var link = $(this).attr("action");
          $.ajax({
-             url: $(this).attr("action"),
+             url: link,
              type: "POST",
              data: {
                "name": $("#tname").val(),
+               "create_new": 1,
                "CSRF": csrfToken,
              },
              success: function(data) {
                  alert("Successfully submitted.");
-                 $("#submitForm").remove();
+                 $(":root").html(data);
              }
          });
          e.preventDefault();

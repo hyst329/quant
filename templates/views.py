@@ -34,7 +34,15 @@ def userprofile(request):
 @login_required
 def tempeditor(request):
     try:
-        name = request.POST["name"]
+        if request.method == "POST":
+            name = request.POST.get("name")
+            create_new = int(request.POST.get("create_new", "0"))
+        else:
+            name = request.GET.get("name")
+            create_new = int(request.GET.get("create_new", "0"))
+        exists = Template.objects.filter(USER=request.user, TEMPLATE_NAME=name).exists()
+        if exists == bool(create_new):
+            raise Exception("404")
         Template.objects.get_or_create(USER=request.user, TEMPLATE_NAME=name)
     except Exception as e:
         return HttpResponse(e)
