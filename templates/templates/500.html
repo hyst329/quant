@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+{% load djangocodemirror_tags %}
+
+{% block content %}
+
+<div class="container">
+  <h3>500 Internal server error</h3>
+  <div class="alert alert-danger" role="alert">
+    {{ exception }}
+  </div>
+  <a href="/templates/userprofile" class="btn btn-primary">
+    {% bootstrap_icon "home" %}
+    Return to my profile
+  </a>
+</div>
+
+{% endblock %}

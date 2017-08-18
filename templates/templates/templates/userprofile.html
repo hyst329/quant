@@ -135,20 +135,8 @@
 
   $(document).ready( function() {
     $("#create-template-form").on("submit", function(e) {
-         var link = $(this).attr("action");
-         $.ajax({
-             url: link,
-             type: "POST",
-             data: {
-               "name": $("#tname").val(),
-               "create_new": 1,
-               "CSRF": csrfToken,
-             },
-             success: function(data) {
-                 alert("Successfully submitted.");
-                 $(":root").html(data);
-             }
-         });
+         var link = $(this).attr("action") + "?name=" + $("#tname").val() + "&create_new=1";
+         window.location.href = link;
          e.preventDefault();
     }); 
 
