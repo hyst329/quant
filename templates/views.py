@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden
-from django.template import loader
+from django.template import loader, Template as DjangoTemplate, Context
 from django.contrib.auth.decorators import login_required
-from django.views.defaults import permission_denied
+from django.views.defaults import permission_denied, page_not_found
 
 # Create your views here.
 from .models import *
@@ -47,3 +47,13 @@ def tempeditor(request):
         return HttpResponse(e)
     return render(request, "templates/tempedit.html",
                   {"name": name})
+
+
+@login_required
+def temprender(request):
+    if request.method != "POST" or (request.POST.get("template", None) is None):
+        return page_not_found(request, "POST should be used")
+    t = DjangoTemplate(request.POST["template"])
+    p = t.render(Context()) 
+    print("P = %s" % p)
+    return HttpResponse(p)
