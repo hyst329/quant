@@ -53,7 +53,7 @@ def tempeditor(request):
 def temprender(request):
     if request.method != "POST" or (request.POST.get("template", None) is None):
         return page_not_found(request, "POST should be used")
-    t = DjangoTemplate(request.POST["template"])
+    t = DjangoTemplate(request.POST["template"])    
     p = t.render(Context()) 
     print("P = %s" % p)
     return HttpResponse(p)

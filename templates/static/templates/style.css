@@ -6,13 +6,15 @@
 }
 
 #preview {
-  width: 45%;
+  width: 48%;
   float: right;
-  height: 80%;
+  height: 600px;
+  border: 1px solid black;
 }
 
-#code {
-  width: 45%;
+.CodeMirror {
+  width: 48%;
   float: left;
-  height: 80%;
+  height: 600px;
+  border: 1px solid black;
 }

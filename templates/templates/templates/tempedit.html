@@ -7,11 +7,16 @@
 <div class="container">
   <textarea id="code" name="code">Preview your template here.</textarea>
   <iframe id="preview"></iframe>
-  <br>
-  <button class="btn btn-danger">
-    {% bootstrap_icon "save" %}
-    Save
-  </button>
+  <div class="btn-group" role="group">
+    <button class="btn btn-success">
+      {% bootstrap_icon "save" %}
+      Save template
+    </button>
+    <button class="btn btn-danger">
+      {% bootstrap_icon "log_out" %}
+      Back to my profile
+    </button>
+  </div>
 </div>
 {% codemirror_instance 'django' 'code_codemirror' 'code' %}
 <script>
