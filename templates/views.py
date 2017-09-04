@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.defaults import permission_denied, page_not_found
 from .storage import OverwriteStorage
 from django.core.files.base import ContentFile
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
 
 # Create your views here.
 from .models import *
@@ -13,6 +15,20 @@ from .models import *
 def index(request):
     return redirect("login")
 
+
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get("username")
+            raw_password = form.cleaned_data.get("password1")
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect("userprofile")
+    else:
+        form = UserCreationForm()
+    return render(request, "templates/signup.html", {"form": form})
 
 @login_required
 def userprofile(request):
