@@ -5,10 +5,10 @@
 {% block content %}
 
 <div class="container">
-  <textarea id="code" name="code">Preview your template here.</textarea>
+  <textarea id="code" name="code">{{ content }}</textarea>
   <iframe id="preview"></iframe>
   <div class="btn-group" role="group">
-    <button class="btn btn-success">
+    <button id="save" class="btn btn-success">
       {% bootstrap_icon "save" %}
       Save template
     </button>
@@ -48,6 +48,25 @@
       }
     });
   }
+
+  $("#save").on("click", function() {
+    alert("Saving test...");
+    $.ajax({
+      type: "POST",
+      url: "/templates/tempsave/",
+      data: {
+        "template": code_codemirror.getValue(),
+        "name": "{{name}}"
+      },
+      success: function (data) {
+        alert("Saved.");
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        alert(xhr.status);
+        alert(thrownError);
+      }
+    });
+  });
 
 </script>
 {% endblock %}

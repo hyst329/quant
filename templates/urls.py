@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^userprofile/$', views.userprofile, name='userprofile'),
     url(r'^tempeditor/$', views.tempeditor, name='tempeditor'),
     url(r'^temprender/$', views.temprender, name='temprender'),
+    url(r'^tempsave/$', views.tempsave, name='tempsave'),
 ]

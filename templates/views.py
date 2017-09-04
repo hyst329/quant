@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.template import loader, Template as DjangoTemplate, Context
 from django.contrib.auth.decorators import login_required
 from django.views.defaults import permission_denied, page_not_found
-from django.core.files.storage import default_storage
+from .storage import OverwriteStorage
 from django.core.files.base import ContentFile
 
 # Create your views here.
@@ -44,11 +44,21 @@ def tempeditor(request):
         if exists == bool(create_new):
             return permission_denied(request, "You're attempting to create an existing"
                                      " page or edit a nonexistent one.")
-        Template.objects.get_or_create(USER=request.user, TEMPLATE_NAME=name)
+        tpl = Template.objects.get_or_create(USER=request.user, TEMPLATE_NAME=name)
+        if not tpl[1]:
+            u = request.user
+            filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl[0].id, tpl[0].TEMPLATE_NAME)
+            st = OverwriteStorage()
+            if not st.exists(filename):
+                val = "<b>Preview your template here.</b>"
+            else:
+                val = st.open(filename).read()
+        else:
+            val = "<b>Preview your template here.</b>"
     except Exception as e:
         return HttpResponse(e)
     return render(request, "templates/tempedit.html",
-                  {"name": name})
+                  {"name": name, "content": val})
 
 
 @login_required
@@ -68,5 +78,9 @@ def tempsave(request):
     n = request.POST["name"]
     u = request.user
     tpl = Template.objects.get_or_create(USER=u, TEMPLATE_NAME=n)
-    filename = "/templates/storage/%d-%s/%d-%s.html" % (u.id, u.name, tpl.id, tpl.TEMPLATE_NAME)
-    default_storage.save_to_file(filename, ContentFile(t))
+    if tpl[1]:
+        return permission_denied(request, "Something went wrong")
+    tpl = tpl[0]
+    filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl.id, tpl.TEMPLATE_NAME)
+    OverwriteStorage().save(filename, ContentFile(t))
+    return HttpResponse()
