@@ -46,8 +46,6 @@ INSTALLED_APPS = [
     'bootstrap3',
     # CodeMirror
     'djangocodemirror',
-    # Storages
-    'storages',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +133,3 @@ STATIC_URL = '/static/'
 
 LOGIN_URL = '/templates/login/'
 LOGIN_REDIRECT_URL = '/templates/userprofile'
-
-# Storage
-DEFAULT_FILE_STORAGE = 'storages.backends.overwrite.OverwriteStorage'
