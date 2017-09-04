@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.template import loader, Template as DjangoTemplate, Context
 from django.contrib.auth.decorators import login_required
 from django.views.defaults import permission_denied, page_not_found
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 # Create your views here.
 from .models import *
@@ -57,3 +59,14 @@ def temprender(request):
     p = t.render(Context()) 
     print("P = %s" % p)
     return HttpResponse(p)
+
+@login_required
+def tempsave(request):
+    if request.method != "POST" or (request.POST.get("template", None) is None) or (request.POST.get("name", None) is None):
+        return page_not_found(request, "POST should be used")
+    t = request.POST["template"]
+    n = request.POST["name"]
+    u = request.user
+    tpl = Template.objects.get_or_create(USER=u, TEMPLATE_NAME=n)
+    filename = "/templates/storage/%d-%s/%d-%s.html" % (u.id, u.name, tpl.id, tpl.TEMPLATE_NAME)
+    default_storage.save_to_file(filename, ContentFile(t))
