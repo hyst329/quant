@@ -13,7 +13,8 @@ from .models import *
 
 
 def index(request):
-    return redirect("login")
+    # return redirect("login")
+    return render(request, "templates/index.html")
 
 
 def signup(request):
