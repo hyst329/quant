@@ -77,7 +77,8 @@ def tempeditor(request):
                 val = st.open(filename).read()
         else:
             val = "<b>Preview your template here.</b>"
-        val = chardet.detect(val)["encoding"]
+        enc = chardet.detect(val)["encoding"]
+        val = val.decode(enc).encode("utf-8")
     except Exception as e:
         return HttpResponse(e)
     return render(request, "templates/tempedit.html",
