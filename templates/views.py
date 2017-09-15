@@ -65,18 +65,18 @@ def tempeditor(request):
             USER=request.user, TEMPLATE_NAME=name).exists()
         if exists == bool(create_new):
             return permission_denied(request, "You're attempting to create an existing"
-                                     " page or edit a nonexistent one.")
+                                        " page or edit a nonexistent one.")
         tpl = Template.objects.get_or_create(USER=request.user, TEMPLATE_NAME=name)
         if not tpl[1]:
             u = request.user
             filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl[0].id, tpl[0].TEMPLATE_NAME)
             st = OverwriteStorage()
             if not st.exists(filename):
-                val = "<b>Preview your template here.</b>"
+                val = b"<b>Preview your template here.</b>"
             else:
                 val = st.open(filename).read()
         else:
-            val = "<b>Preview your template here.</b>"
+            val = b"<b>Preview your template here.</b>"
         enc = chardet.detect(val)["encoding"]
         val = val.decode(enc).encode("utf-8")
     except Exception as e:
