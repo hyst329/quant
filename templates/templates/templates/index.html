@@ -1,9 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<nav class="navbar navbar-primary">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/templates/">Quant</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href=".">Home</a></li>
+      <li><a href="about">About</a></li>
+      <li><a href="gallery">Gallery</a></li>
+    </ul>
+  </div>
+</nav>
+<div id="home">
   <a href="/templates/login" class="btn btn-lg btn-primary">
     <div class="centered" align=center>
     <h4>Start Now</h4> Log in or sign up
     </div>
   </a>
+</div>
 {% endblock %}

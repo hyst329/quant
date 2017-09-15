@@ -16,6 +16,9 @@ def index(request):
     # return redirect("login")
     return render(request, "templates/index.html")
 
+def about(request):
+    return render(request, "templates/about.html")
+
 
 def signup(request):
     if request.method == "POST":
