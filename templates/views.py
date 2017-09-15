@@ -11,6 +11,8 @@ from django.contrib.auth import login, authenticate
 # Create your views here.
 from .models import *
 
+import chardet
+
 
 def index(request):
     # return redirect("login")
@@ -75,6 +77,7 @@ def tempeditor(request):
                 val = st.open(filename).read()
         else:
             val = "<b>Preview your template here.</b>"
+        val = chardet.detect(val)["encoding"]
     except Exception as e:
         return HttpResponse(e)
     return render(request, "templates/tempedit.html",
