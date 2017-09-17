@@ -12,6 +12,7 @@ from django.contrib.auth import login, authenticate
 from .models import *
 
 import chardet
+import json
 
 
 def index(request):
@@ -108,3 +109,18 @@ def tempsave(request):
     filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl.id, tpl.TEMPLATE_NAME)
     OverwriteStorage().save(filename, ContentFile(t))
     return HttpResponse()
+
+
+def pagerender(request, user_id, user_name, page_id, page_name):
+    user_id = int(user_id)
+    page_id = int(page_id)
+    u = User.objects.get(id=user_id)
+    assert(u.username == user_name)
+    p = Page.objects.get(USER=u, PAGE_NAME=page_name)
+    assert(p.id == page_id)
+    jsonname = "templates/storage/%d-%s/%d-%s.json" % (user_id, user_name, page_id, page_name)
+    ctx = json.loads(OverwriteStorage().open(jsonname).read())
+    tpl = p.TEMPLATE
+    filename = "templates/storage/%d-%s/%d-%s.html" % (
+        tpl.USER.id, tpl.USER.username, tpl.id, tpl.TEMPLATE_NAME)
+    return render(request, filename, ctx)
