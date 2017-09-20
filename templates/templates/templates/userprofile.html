@@ -72,7 +72,7 @@
       <p>Work in progress</p>
       {% if pages %}
         {% for page in pages %}
-          <p>{{ page }}</p>
+          <a href="/templates/pageeditor/?name={{ page.PAGE_NAME }}">{{ page.PAGE_NAME }}</a>
         {% endfor %}
       {% else %}
       <div class="alert alert-warning" role="alert">

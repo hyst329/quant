@@ -20,6 +20,7 @@ def index(request):
     # return redirect("login")
     return render(request, "templates/index.html")
 
+
 def about(request):
     return render(request, "templates/about.html")
 
@@ -37,6 +38,7 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, "templates/signup.html", {"form": form})
+
 
 @login_required
 def userprofile(request):
@@ -67,11 +69,13 @@ def tempeditor(request):
             USER=request.user, TEMPLATE_NAME=name).exists()
         if exists == bool(create_new):
             return permission_denied(request, "You're attempting to create an existing"
-                                        " page or edit a nonexistent one.")
-        tpl = Template.objects.get_or_create(USER=request.user, TEMPLATE_NAME=name)
+                                     " page or edit a nonexistent one.")
+        tpl = Template.objects.get_or_create(
+            USER=request.user, TEMPLATE_NAME=name)
         if not tpl[1]:
             u = request.user
-            filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl[0].id, tpl[0].TEMPLATE_NAME)
+            filename = "templates/storage/%d-%s/%d-%s.html" % (
+                u.id, u.username, tpl[0].id, tpl[0].TEMPLATE_NAME)
             st = OverwriteStorage()
             if not st.exists(filename):
                 val = b"<b>Preview your template here.</b>"
@@ -91,10 +95,11 @@ def tempeditor(request):
 def temprender(request):
     if request.method != "POST" or (request.POST.get("template", None) is None):
         return page_not_found(request, "POST should be used")
-    t = DjangoTemplate(request.POST["template"])    
-    p = t.render(Context()) 
+    t = DjangoTemplate(request.POST["template"])
+    p = t.render(Context())
     print("P = %s" % p)
     return HttpResponse(p)
+
 
 @login_required
 def tempsave(request):
@@ -107,9 +112,11 @@ def tempsave(request):
     if tpl[1]:
         return permission_denied(request, "Something went wrong")
     tpl = tpl[0]
-    filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl.id, tpl.TEMPLATE_NAME)
+    filename = "templates/storage/%d-%s/%d-%s.html" % (
+        u.id, u.username, tpl.id, tpl.TEMPLATE_NAME)
     OverwriteStorage().save(filename, ContentFile(t))
     return HttpResponse()
+
 
 @login_required
 def pageeditor(request):
@@ -121,8 +128,14 @@ def pageeditor(request):
         if exists == bool(create_new):
             return permission_denied(request, "You're attempting to create an existing"
                                      " page or edit a nonexistent one.")
-        pg = Page.objects.get_or_create(
-            USER=request.user, PAGE_NAME=name)
+        # Create with 'default' template
+        if create_new:
+            tpl = Template.objects.first()
+            pg = Page.objects.get_or_create(
+                USER=request.user, PAGE_NAME=name, TEMPLATE=tpl)
+        else:
+            pg = Page.objects.get_or_create(
+                USER=request.user, PAGE_NAME=name)
         if not pg[1]:
             u = request.user
             filename = "templates/storage/%d-%s/%d-%s.json" % (
@@ -138,6 +151,7 @@ def pageeditor(request):
         val = val.decode(enc).encode("utf-8")
         data = json.loads(val)
         table = PageTable(data)
+        table.paginate(page=request.GET.get('page', 1), per_page=25)
     except Exception as e:
         return HttpResponse(e)
     return render(request, "templates/pageedit.html", {"table": table})
@@ -150,9 +164,12 @@ def pagerender(request, user_id, user_name, page_id, page_name):
     assert(u.username == user_name)
     p = Page.objects.get(USER=u, PAGE_NAME=page_name)
     assert(p.id == page_id)
-    jsonname = "templates/storage/%d-%s/%d-%s.json" % (user_id, user_name, page_id, page_name)
-    ctx = json.loads(OverwriteStorage().open(jsonname).read())
+    jsonname = "templates/storage/%d-%s/%d-%s.json" % (
+        user_id, user_name, page_id, page_name)
+    ctx = Context({a["key"]: a["value"]
+           for a in json.loads(OverwriteStorage().open(jsonname).read())})
     tpl = p.TEMPLATE
     filename = "templates/storage/%d-%s/%d-%s.html" % (
         tpl.USER.id, tpl.USER.username, tpl.id, tpl.TEMPLATE_NAME)
-    return render(request, filename, ctx)
+    template_data = DjangoTemplate(OverwriteStorage().open(filename).read())
+    return HttpResponse(template_data.render(ctx))

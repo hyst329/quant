@@ -15,6 +15,6 @@ urlpatterns = [
     url(r'^temprender/$', views.temprender, name='temprender'),
     url(r'^tempsave/$', views.tempsave, name='tempsave'),
     url(r'^pageeditor/$', views.pageeditor, name='pageeditor'),
-    url(r'^pages/(?P<user_id>[0-9]+)-(?P<user_name>\w+)/(?P<page_id>[0-9]+)-(?P<page_name>\w+)$',
+    url(r'^pages/(?P<user_id>[0-9]+)-(?P<user_name>[^ ]+)/(?P<page_id>[0-9]+)-(?P<page_name>[^ ]+)$',
             views.pagerender, name='pagerender')
 ]

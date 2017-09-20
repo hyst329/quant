@@ -19,6 +19,11 @@
   border: 1px solid black;
 }
 
+#variables {
+  width: 48%;
+  float: left;
+}
+
 #centered {
   position: absolute;
   margin: auto;
