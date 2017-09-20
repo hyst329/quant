@@ -94,8 +94,11 @@
           </div>
           <div class="modal-body">
             <p>Enter the name of your new page</p>
-            <label for="pname">Name:</label>
-            <input type="text" class="form-control" id="pname">
+            <form id="create-page-form" action="/templates/pageeditor/" method="POST"></form>
+              {% csrf_token %}
+              <label for="pname">Name:</label>
+              <input type="text" class="form-control" id="pname">
+            </form>
           </div>
           <div class="modal-footer">
             <button id="create-page" type="submit" class="btn btn-success" data-dismiss="modal">Create</button>
@@ -142,8 +145,18 @@
 
     $("#create-template").on("click", function() {
       $("#create-template-form").submit();
+    });
+
+    $("#create-page-form").on("submit", function (e) {
+        var link = $(this).attr("action") + "?name=" + $("#pname").val() + "&create_new=1";
+        window.location.href = link;
+        e.preventDefault();
+      });
+
+    $("#create-page").on("click", function () {
+      $("#create-page-form").submit();
+    });
   });
- });
 </script>
 
 {% endblock %}
