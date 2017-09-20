@@ -8,10 +8,9 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 
-from tri.table import Table, Column
-
 # Create your views here.
 from .models import *
+from .tables import *
 
 import chardet
 import json
@@ -114,7 +113,34 @@ def tempsave(request):
 
 @login_required
 def pageeditor(request):
-    return render(request, "templates/pageedit.html")
+    try:
+        name = request.GET.get("name")
+        create_new = int(request.GET.get("create_new", "0"))
+        exists = Page.objects.filter(
+            USER=request.user, PAGE_NAME=name).exists()
+        if exists == bool(create_new):
+            return permission_denied(request, "You're attempting to create an existing"
+                                     " page or edit a nonexistent one.")
+        pg = Page.objects.get_or_create(
+            USER=request.user, PAGE_NAME=name)
+        if not pg[1]:
+            u = request.user
+            filename = "templates/storage/%d-%s/%d-%s.json" % (
+                u.id, u.username, pg[0].id, pg[0].PAGE_NAME)
+            st = OverwriteStorage()
+            if not st.exists(filename):
+                val = b"[{\"key\": \"test\", \"value\": \"test\"}]"
+            else:
+                val = st.open(filename).read()
+        else:
+            val = b"[{\"key\": \"test\", \"value\": \"test\"}]"
+        enc = chardet.detect(val)["encoding"]
+        val = val.decode(enc).encode("utf-8")
+        data = json.loads(val)
+        table = PageTable(data)
+    except Exception as e:
+        return HttpResponse(e)
+    return render(request, "templates/pageedit.html", {"table": table})
 
 
 def pagerender(request, user_id, user_name, page_id, page_name):
