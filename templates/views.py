@@ -8,6 +8,8 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 
+from tri.table import Table, Column
+
 # Create your views here.
 from .models import *
 
@@ -109,6 +111,10 @@ def tempsave(request):
     filename = "templates/storage/%d-%s/%d-%s.html" % (u.id, u.username, tpl.id, tpl.TEMPLATE_NAME)
     OverwriteStorage().save(filename, ContentFile(t))
     return HttpResponse()
+
+@login_required
+def pageeditor(request):
+    return render(request, "templates/pageedit.html")
 
 
 def pagerender(request, user_id, user_name, page_id, page_name):

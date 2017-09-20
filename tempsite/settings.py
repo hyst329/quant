@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'bootstrap3',
     # CodeMirror
     'djangocodemirror',
+    # tri.table
+    'tri.table',
 ]
 
 MIDDLEWARE = [
