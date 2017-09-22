@@ -25,6 +25,10 @@ def about(request):
     return render(request, "templates/about.html")
 
 
+def gallery(request):
+    return render(request, "templates/gallery.html")
+
+
 def signup(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
