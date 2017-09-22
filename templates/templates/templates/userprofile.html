@@ -101,6 +101,12 @@
               {% csrf_token %}
               <label for="pname">Name:</label>
               <input type="text" class="form-control" id="pname">
+              <label for="ptemp">Template:</label>
+              <select name="templates" id="ptemp">
+                {% for template in alltemplates %}
+                  <option value="{{ template.id }}">{{ template.TEMPLATE_NAME }} by {{ template.USER }}</option>
+                {% endfor %}
+              </select>
             </form>
           </div>
           <div class="modal-footer">
@@ -151,7 +157,8 @@
     });
 
     $("#create-page-form").on("submit", function (e) {
-        var link = $(this).attr("action") + "?name=" + $("#pname").val() + "&create_new=1";
+        var link = $(this).attr("action") + "?name=" + $("#pname").val() + "&create_new=1"
+         + "&template_id=" + $("#ptemp").val();
         window.location.href = link;
         e.preventDefault();
       });

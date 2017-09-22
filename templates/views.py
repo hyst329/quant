@@ -52,11 +52,13 @@ def userprofile(request):
     #                     (user.username, status))
     templates = Template.objects.filter(USER=user)
     pages = Page.objects.filter(USER=user)
+    alltemplates = Template.objects.all()
 
     return render(request, "templates/userprofile.html",
                   {"username": user.username,
                    "status": status,
                    "templates": templates,
+                   "alltemplates": alltemplates,
                    "pages": pages})
 
 
@@ -123,6 +125,7 @@ def pageeditor(request):
     try:
         name = request.GET.get("name")
         create_new = int(request.GET.get("create_new", "0"))
+        template_id = int(request.GET.get("template_id", "1"))
         exists = Page.objects.filter(
             USER=request.user, PAGE_NAME=name).exists()
         if exists == bool(create_new):
@@ -130,7 +133,11 @@ def pageeditor(request):
                                      " page or edit a nonexistent one.")
         # Create with 'default' template
         if create_new:
-            tpl = Template.objects.first()
+            tpl = Template.objects.filter(id=template_id)
+            if tpl.exists():
+                tpl = tpl.first()
+            else:
+                tpl = Template.objects.first()
             pg = Page.objects.get_or_create(
                 USER=request.user, PAGE_NAME=name, TEMPLATE=tpl)
         else:
