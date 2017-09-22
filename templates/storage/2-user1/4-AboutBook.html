@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block header %}
+<h1>{{ title }}</h1>
+{% endblock %}
+{% block content %}
+<a href="{{ returnlink }}">{{ returntext }}</a>
+<p>
+<b>{{ title }}</b> &#8212; {{ definition }}
+</p>
+<p>
+{{ description }}
+</p>
+
+<p>Перейти к чтению</p>
+<ul>
+{% for c in chapters %}
+<li><a href="{{ c.link }}">{{ c.title }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
+{% block footer %}
+<p>Copyright 2017 by {{ user }}</p> 
+{% endblock %}

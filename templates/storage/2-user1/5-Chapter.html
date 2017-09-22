@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block header %}
+<h1>Глава {{ chapterno }}</h1>
+{% endblock %}
+{% block content %}
+<a href="{{ mainlink }}">На главную</a>
+<br> 
+<a href="{{ prevchapter }}">Предыдущая глава</a>
+<a href="{{ nextchapter }}">Следующая глава</a>
+
+
+{% for p in paragraphs %}
+<p>{{ p }}</p>
+{% endfor %}
+{% endblock %}
+{% block footer %}
+<p>Copyright 2017 by {{ user }}</p> 
+{% endblock %}
